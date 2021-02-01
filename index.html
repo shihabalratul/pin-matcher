@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pin Generator</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/css/bootstrap.min.css"
+        integrity="sha384-9aIt2nRpC12Uk9gS9baDl411NQApFmC26EwAOH8WgZl5MYYxFfc+NcPb1dKGj7Sk" crossorigin="anonymous">
+    <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+    <div id="container" class="container">
+        <div class="row">
+            <div class="col-md-6">
+                <div class="pin-generator half-width">
+                    <input id="pinOutput" class="form-control" type="text" readonly>
+                    <button onclick="generatePin()" class="generate-btn">Generate Pin</button>
+                </div>
+            </div>
+            <div class="col-md-6">
+                <div class="input-section half-width">
+                    <input id="pinInput" class="form-control" type="text" readonly value="">
+                    <div class="numbers">
+                        <div class="calc-body">
+                            <div id="keyBody">
+                                <div class="calc-button-row">
+                                    <button class="btn button">7</button>
+                                    <button class="btn button">8</button>
+                                    <button class="btn button">9</button>
+                                </div>
+                                <div class="calc-button-row">
+                                    <button class="btn button">4</button>
+                                    <button class="btn button">5</button>
+                                    <button class="btn button">6</button>
+                                </div>
+                                <div class="calc-button-row">
+                                    <button class="btn button">1</button>
+                                    <button class="btn button">2</button>
+                                    <button class="btn button">3</button>
+                                </div>
+                                <div class="calc-button-row">
+                                    <!-- <button class="btn button"> </button> -->
+                                    <button class="btn button">0</button>
+                                    <button class="btn button">C</button>
+                                </div>
+                            </div>
+                            <div>
+
+                                <button onclick="comparePin()" type="submit" class="submit-btn">Submit</button>
+                                <p class="action-left"><span id="try-left">3</span> try left</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="notify-section">
+                <p id="unMatched" class="notify">❌ Pin Didn't Match, Please try again</p>
+                <p id="matched" class="notify">✅ Pin Matched... Secret door is opening for you</p>
+            </div>
+        </div>
+        <div id="no-try">
+            <h1>Sorry No More Try.</h1>
+        </div>
+        <script>
+            function generatePin() {
+                const randomNum = Math.round(Math.random() * 100000);
+                let randomString = randomNum + "";
+                if (randomString.length < 5) {
+                    generatePin();
+                    return;
+                }
+                document.getElementById("pinOutput").value = randomString;
+
+            };
+
+            document.getElementById("keyBody").addEventListener("click", e => {
+                let inputNum = "";
+                if (e.target.matches("button")) {
+                    inputNum = e.target.innerText;
+                }
+                getInputPin(inputNum);
+               
+            });
+
+
+            function getInputPin(input) {
+                let display = document.getElementById("pinInput");
+                if (input != "C") {
+                    if (display.value.length == 5) {
+                        return;
+                    }
+                    display.value = display.value + input;
+                }
+
+                if (input == "C") {
+                    display.value = display.value.substring(0, display.value.length - 1);
+                }
+            }
+
+
+            function comparePin() {
+                const output = document.getElementById("pinInput").value;
+                const input = document.getElementById("pinOutput").value;
+                const matched = document.getElementById("matched");
+                const unMatched = document.getElementById("unMatched");
+                if (output == input) {
+                    matched.style.visibility = "visible";
+                    unMatched.style.visibility = "hidden";
+                }
+                if (output != input) {
+                    unMatched.style.visibility = "visible";
+                    matched.style.visibility = "hidden";
+                    tryleft();
+                }
+                if (output == "" || input == "") {
+                    matched.style.visibility = "hidden";
+                    unMatched.style.visibility = "hidden";
+                }
+                 
+            }
+
+
+            function tryleft(){
+                let tryLeft = document.getElementById("try-left");
+                const tryLeftNum = parseInt(tryLeft.innerText);
+                if(tryLeftNum == 0){
+                    document.getElementById("no-try").style.visibility="visible";
+                    document.getElementById("container").style.visibility="hidden";
+                    document.getElementById("unMatched").style.visibility="hidden";
+                    document.getElementById("matched").style.visibility="hidden";
+                    return;
+                }
+                tryLeft.innerText = tryLeftNum - 1;
+
+            }
+        </script>
+    </div>
+
+</body>
+
+</html>
